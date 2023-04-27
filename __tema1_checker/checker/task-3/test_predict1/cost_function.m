@@ -38,34 +38,17 @@ function [J, grad] = cost_function(params, X, y, lambda, ...
     result(i, :) = a';
   endfor
   % TODO3: Compute the error in the output layer and perform backpropagation
-  delta1 = zeros(s2, s1 + 1);
-  delta2 = zeros(s3, s2 + 1);
-  
   for i=1:rows(result)
     a = result(i, :);
     err3 = a' - y(i,1);
     delta2 = delta2 + err3 * hidden(i, :);
-    err2 = (Theta2' * err3) .* [1; (sigmoid(vecz(i, :)) .* (1 - sigmoid(vecz(i, :))))'];
-    err2(1,:) = [];
+    err2 = Theta2' * err3 .* (sigmoid(vecz(i, :)) * (1 - sigmoid(vecz(i, :))));
     delta1 = delta1 + err2 * [1, X(i,:)];
   endfor
   % TODO4: Determine the gradients
-  delta1 = delta1 / rows(X);
-  delta2 = delta2 / rows(X);
-  for i = 1:s2
-    for j = 2:s1 + 1
-      delta1(i,j) += lambda / rows(X) * delta1(i,j);
-    endfor
-  endfor
-  for i = 1:s3
-    for j = 2:s2 + 1
-      delta2(i,j) += lambda / rows(X) * delta2(i,j);
-    endfor
-  endfor
   grad1 = delta1(:);
   grad2 = delta2(:);
-  grad = [grad1; grad2];
+  grad = [grad1'; grad2'];
   % TODO5: Final J and grad
-  grad = 0;
   J = 0;
 endfunction
